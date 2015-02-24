@@ -10,4 +10,7 @@ The interesting files are:
  - [DataReductionServlet.scala](https://github.com/curran/scalatra-spark/blob/master/data-reduction-server/src/main/scala/com/alpine/dataReductionServer/DataReductionServlet.scala) This is the part that defines a JSON REST API that invokes a Spark job.
  - [main.js](https://github.com/curran/scalatra-spark/blob/master/data-reduction-server/src/main/webapp/main.js) This invokes the API using jQuery and prints the result to the console.
 
+
+See also [StackOverflow - Any examples of code integrating Scalatra with Spark](http://stackoverflow.com/questions/24965676/any-examples-of-code-integrating-scalatra-with-spark)
+
 by Curran Kelleher Feb 2015
