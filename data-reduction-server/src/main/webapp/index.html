@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+  </head>
+  <body>
+    <script>
+      $.ajax({
+        type: "GET",
+        url: "/reduceData",
+        data: {
+          options: JSON.stringify({
+            name: "Henry",
+            id: 5
+          })
+        },
+        success: function(data){
+          console.log(data);
+        }
+      });
+    </script>
+  </body>
+</html>
