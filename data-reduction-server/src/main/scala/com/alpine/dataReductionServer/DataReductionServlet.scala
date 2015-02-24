@@ -10,6 +10,8 @@ import org.scalatra._
 // Use JSON4S for JSON serialization
 import org.json4s._
 import org.json4s.jackson.Serialization.{read, write}
+import org.json4s.JsonDSL._
+import org.json4s.jackson.JsonMethods._
 
 // Use Spark
 import org.apache.spark.SparkContext
@@ -58,8 +60,16 @@ class DataReductionServlet extends ScalatraServlet {
     val attributeIndices = schema.map(_.split(",")(0).trim).zipWithIndex.toMap
     dimensions = dimensions.map(d => Dimension(d.name, attributeIndices(d.name)))
     measures = measures.map(m => 
-      if (m.aggregationOp == "count"){ m }
-      else { Measure(m.aggregationOp, m.name, attributeIndices(m.name)) }
+      if (m.aggregationOp == "count"){ 
+
+        // Present count as a column called "count" in the output.
+        Measure("count", "count")
+      }
+      else {
+
+        // For non-count aggregations, the attribute index is necessary.
+        Measure(m.aggregationOp, m.name, attributeIndices(m.name))
+      }
     )
 
     // Parse data into table, ignoring rows not parsed correctly.
@@ -89,7 +99,27 @@ class DataReductionServlet extends ScalatraServlet {
 
     ).collect()
 
-    write(cube)
+    // Return the cube to the client as nicely formatted JSON.
+    write(cube.map( observation =>
+      (
+        dimensions.map(_.name).zip(observation._1) :::
+        measures.map(_.name).zip(observation._2)
+      ).toMap
+    ))
+
+    // Example output:
+    // [
+    //   { "sex": "Female", "race": "White", "count": 8642, "capital-gain": 4957141 },
+    //   { "sex": "Female", "race": "Other", "count": 109, "capital-gain": 27759 },
+    //   { "sex": "Male", "race": "Black", "count": 1569, "capital-gain": 1102151 },
+    //   { "sex": "Female", "race": "Asian-Pac-Islander", "count": 346, "capital-gain": 269339 },
+    //   { "sex": "Female", "race": "Amer-Indian-Eskimo", "count": 119, "capital-gain": 64808 },
+    //   { "sex": "Male", "race": "White", "count": 19174, "capital-gain": 26242964 },
+    //   { "sex": "Male", "race": "Other", "count": 162, "capital-gain": 225534 },
+    //   { "sex": "Female", "race": "Black", "count": 1555, "capital-gain": 803303 },
+    //   { "sex": "Male", "race": "Asian-Pac-Islander", "count": 693, "capital-gain": 1266675 },
+    //   { "sex": "Male", "race": "Amer-Indian-Eskimo", "count": 192, "capital-gain": 129650 }
+    // ]
   }
 
   // Serve static files.
