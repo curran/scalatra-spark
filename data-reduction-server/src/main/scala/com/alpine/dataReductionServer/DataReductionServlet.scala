@@ -1,10 +1,20 @@
 package com.alpine.dataReductionServer
 import org.scalatra._
 import org.json4s._
-import org.json4s.jackson.JsonMethods._
+import org.json4s.jackson.Serialization.{read, write}
 
-case class Person(id: Int, name: String)
+// Define types for JSON options passed in from the client.
+case class Options( sample: Sample = null, filter: List[Filter], aggregate: Aggregate)
 
+case class Sample( n: Int, withReplacement: Boolean = true, seed: Int = 0)
+
+case class Filter( name: String ) // TODO complete this type
+
+case class Aggregate(dimensions: List[Dimension], measures: List[Measure])
+
+case class Dimension(name: String, i: Integer = 0)
+
+case class Measure(aggregationOp: String, name:String = "", i: Integer = 0)
 
 class DataReductionServlet extends ScalatraServlet {
 
@@ -13,9 +23,8 @@ class DataReductionServlet extends ScalatraServlet {
   implicit val formats = DefaultFormats
 
   get("/reduceData") {
-    val optionsJSONStr = params("options")
-    val person = parse(optionsJSONStr).extract[Person]
-    "Hello" + person.name
+    val options = read[Options](params("options"))
+    write(options)
   }
 
   notFound {
