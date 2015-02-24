@@ -1,30 +1,25 @@
+// Invoke the API for computing data cubes with Spark.
 $.ajax({
     type: "GET",
     url: "/reduceData",
     data: {
         options: JSON.stringify({
             dataset: "adult",
-            sample: {
-                n: 5
-            },
-            filter: [
-                { name: "foo" },
-                { name: "bar" }
-            ],
-            aggregate: {
+            cube: {
                 dimensions: [
-                    { name: "baz" },
-                    { name: "bat" }
+                    { name: "sex" },
+                    { name: "race" }
                 ],
                 measures: [
                     { aggregationOp: "count" },
-                    { aggregationOp: "sum", name: "bag" }
+                    { aggregationOp: "sum", name: "capital-gain" }
                 ]
             }
         })
     },
     success: function(data){
-        console.log(data);
-        //console.log(JSON.stringify(JSON.parse(data), null, 2));
+
+        // Pretty-print the returned JSON.
+        console.log(JSON.stringify(JSON.parse(data), null, 2));
     }
 });
