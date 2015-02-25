@@ -36,6 +36,7 @@ class DataReductionServlet extends ScalatraServlet {
   val sc = new SparkContext(conf)
 
   // This is a stand-in for a more complex data abstraction layer.
+  // To get the data onto your machine, clone https://github.com/curran/data
   val datasets = Map("adult" -> "/Users/Kelleher/repos/data/uci_ml/adult/")
 
   // This defines the HTTP GET method that invokes Spark.
